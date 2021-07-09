@@ -6,7 +6,7 @@
 #include <QWidget>
 #include <QFlags>
 #include <ros/ros.h>
-#include "geometry_msgs/Twist.h"
+#include "std_msgs/Bool.h"
 
 
 namespace rqt_estop {
@@ -25,15 +25,13 @@ public:
 private:
     Ui::EstopWidget ui_;
     QWidget* widget_;
-    geometry_msgs::Twist zero_twist_;
 
-    void cmd_velCallback(const geometry_msgs::Twist::ConstPtr& msg);
     void estopActive();
     void estopInactive();
 
 protected:
-    ros::Publisher cmd_vel_pub_;
-    ros::Subscriber cmd_vel_estop_sub_;
+    ros::Publisher estop_pub_;
+    std_msgs::Bool output_;
 
 private slots:
     void on_estop_button_toggled(bool checked);

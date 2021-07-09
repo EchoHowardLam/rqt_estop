@@ -6,43 +6,64 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
     rqt_gui
     rqt_gui_cpp
-    geometry_msgs
+    std_msgs
 )
 
-find_package(Qt4 REQUIRED COMPONENTS QtCore QtGui)
+if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
+  find_package(Qt5Widgets REQUIRED)
+else()
+  find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+  include(${QT_USE_FILE})
+endif()
 
-include(${QT_USE_FILE})
+catkin_python_setup()
+
+catkin_package(
+	INCLUDE_DIRS include
+	LIBRARIES ${PROJECT_NAME} 
+  CATKIN_DEPENDS roscpp rqt_gui rqt_gui_cpp std_msgs
+)
 
 set(rqt_estop_SRCS
   src/estop_gui.cpp
 )
 
 set(rqt_estop_HDRS
-  src/estop_gui.h
+  include/estop_gui.h
 )
 
 set(rqt_estop_UIS
-  src/estop_gui.ui
+  resource/estop_gui.ui
 )
 
-set(rqt_estop_INCLUDE_DIRECTORIES
-  #  include
+if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
+  qt5_wrap_cpp(rqt_estop_MOCS ${rqt_estop_HDRS})
+  qt5_wrap_ui(rqt_estop_UIS_H ${rqt_estop_UIS})
+else()
+  qt4_wrap_cpp(rqt_estop_MOCS ${rqt_estop_HDRS})
+  qt4_wrap_ui(rqt_estop_UIS_H ${rqt_estop_UIS})
+endif()
+
+include_directories(
+  include
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${catkin_INCLUDE_DIRS}
+)
+add_library(${PROJECT_NAME}
+  ${rqt_estop_SRCS}
+  ${rqt_estop_MOCS}
+  ${rqt_estop_UIS_H}
 )
 
-catkin_package(
-	INCLUDE_DIRS ${rqt_estop_INCLUDE_DIRECTORIES}
-	LIBRARIES ${PROJECT_NAME} 
-    CATKIN_DEPENDS roscpp rqt_gui rqt_gui_cpp geometry_msgs
+target_link_libraries(${PROJECT_NAME}
+  ${catkin_LIBRARIES}
 )
-catkin_python_setup()
 
-qt4_wrap_cpp(rqt_estop_MOCS ${rqt_estop_HDRS})
-qt4_wrap_ui(rqt_estop_UIS_H ${rqt_estop_UIS})
-
-include_directories(${rqt_estop_INCLUDE_DIRECTORIES} ${catkin_INCLUDE_DIRS})
-add_library(${PROJECT_NAME} ${rqt_estop_SRCS} ${rqt_estop_MOCS} ${rqt_estop_UIS_H})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
+  target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
+else()
+  target_link_libraries(${PROJECT_NAME} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+endif()
 
 find_package(class_loader)
 class_loader_hide_library_symbols(${PROJECT_NAME})
@@ -62,5 +83,6 @@ install(PROGRAMS scripts/rqt_estop
 )
 
 install(DIRECTORY include/${PROJECT_NAME}/
+  resource
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )

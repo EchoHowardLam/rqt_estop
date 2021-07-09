@@ -1,12 +1,12 @@
 <library path="lib/librqt_estop">
-  <class name="rqt_estop" type="rqt_estop::estop_gui" base_class_type="rqt_gui_cpp::Plugin">
+  <class name="rqt_estop/estop_gui" type="rqt_estop::estop_gui" base_class_type="rqt_gui_cpp::Plugin">
     <description>
-      A GUI plugin for an emergency stop button for Pioneer robots
+      A GUI plugin for an emergency stop button for robots listening on /e_stop
     </description>
     <qtgui>
        <label>E-stop interface</label>
        <icon type="theme">system-help</icon>
-       <statustip>A GUI plugin for an emergency stop button for Pioneer robots.</statustip>
+       <statustip>A GUI plugin for an emergency stop button for robots listening on /e_stop.</statustip>
     </qtgui>
   </class>
 </library>
