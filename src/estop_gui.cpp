@@ -29,8 +29,8 @@ void estop_gui::initPlugin(qt_gui_cpp::PluginContext& context)
 
     // Set EStop to active (checked)
     ui_.estop_button->setCheckable(true);
-    ui_.estop_button->setChecked(true);
-    estopActive();
+    ui_.estop_button->setChecked(false);
+    estopInactive();
 
     // CONNECTIONS
     connect(ui_.estop_button, SIGNAL( toggled(bool) ), this, SLOT( on_estop_button_toggled(bool) ) );
